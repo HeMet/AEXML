@@ -22,16 +22,25 @@ class AEXMLTests: XCTestCase {
     // MARK: - Helpers
     
     func URLForResource(fileName: String, withExtension ext: String) -> URL {
-        if let url = Bundle(for: AEXMLTests.self)
-            .url(forResource: fileName, withExtension: ext) {
-            return url
-        } else {
-            guard let url = Bundle.module
-                    .url(forResource: "Resources/\(fileName)", withExtension: ext) else {
-                fatalError("can't find resource named: '\(fileName)'")
+        #if os(Windows)
+            // Bundle(for:) is not implemented yet
+            // Bundle.url(forResource:withExtension) produces crash due to constant string being deallocated
+            let bundlePath = Bundle.module.bundlePath
+            let relativeFilePath = "Resources\\\(fileName)"
+            let absolutePath = "\(bundlePath)\\\(relativeFilePath).\(ext)"
+            return URL(fileURLWithPath: absolutePath)
+        #else
+            if let url = Bundle(for: AEXMLTests.self)
+                .url(forResource: fileName, withExtension: ext) {
+                return url
+            } else {                
+                guard let url = Bundle.module
+                        .url(forResource: "Resources\\\(fileName)", withExtension: ext) else {
+                    fatalError("can't find resource named: '\(fileName)'")
+                }
+                return url
             }
-            return url
-        }
+        #endif
     }
     
     func xmlDocumentFromURL(url: URL) -> AEXMLDocument {
