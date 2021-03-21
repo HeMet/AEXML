@@ -33,9 +33,9 @@ class AEXMLTests: XCTestCase {
             if let url = Bundle(for: AEXMLTests.self)
                 .url(forResource: fileName, withExtension: ext) {
                 return url
-            } else {                
+            } else {
                 guard let url = Bundle.module
-                        .url(forResource: "Resources\\\(fileName)", withExtension: ext) else {
+                        .url(forResource: "Resources/\(fileName)", withExtension: ext) else {
                     fatalError("can't find resource named: '\(fileName)'")
                 }
                 return url
